@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# Configuração e segredos locais
+.env
+.env.*
+!.env.example
+
+# Dados persistentes e logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
+logs/
+instance/
+
+# Artefatos de build do Windows/PyInstaller
+dist/
+build/*.toc
+build/*.pyc
+*.spec.bak
+*.exe
+*.dll
+
+# Uploads de usuários: mantenha fora do Git e faça backup separado
+static/uploads/**
+!static/uploads/**/.gitkeep
+
+build/GeradorAssinaturas/
+build/build/
+dist/
+.venv/
+funcionarios.xlsx
+.env

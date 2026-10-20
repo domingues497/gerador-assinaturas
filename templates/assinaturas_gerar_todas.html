@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block titulo %}Gerar todas as assinaturas{% endblock %}
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <h1 class="h4 mb-0">Gerar todas as assinaturas</h1>
+  <a href="{{ url_for('assinaturas.listar') }}" class="btn btn-outline-secondary">Voltar</a>
+</div>
+<div class="row g-3">
+  <div class="col-lg-7">
+    <form method="post" enctype="multipart/form-data" class="card" onsubmit="return confirm('Confirma a geração das assinaturas com todas as opções selecionadas?');">
+      <div class="card-body">
+        <p>Escolha o modelo e configure as mesmas opções disponíveis na geração de uma assinatura individual. As opções selecionadas serão aplicadas a todos os colaboradores ativos processados.</p>
+        <div class="mb-3">
+          <label class="form-label" for="modelo_id">Modelo de assinatura</label>
+          <select class="form-select" name="modelo_id" id="modelo_id" required>
+            <option value="">Selecione...</option>
+            {% for m in modelos %}
+              <option value="{{ m.id }}" {% if modelo_padrao and modelo_padrao.id == m.id %}selected{% endif %}>{{ m.nome }}{% if m.padrao %} (padrão){% endif %}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <hr>
+        <h2 class="h6">Opções da assinatura</h2>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" name="telefone_clicavel" id="telefone_clicavel" checked>
+          <label class="form-check-label" for="telefone_clicavel">Tornar telefone clicável</label>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" name="endereco_clicavel" id="endereco_clicavel">
+          <label class="form-check-label" for="endereco_clicavel">Tornar endereço clicável (Google Maps)</label>
+        </div>
+
+        <hr>
+        <h2 class="h6">Banner opcional</h2>
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" name="banner_ativo" id="banner_ativo">
+          <label class="form-check-label" for="banner_ativo">Ativar banner em todas as assinaturas geradas</label>
+        </div>
+        <div class="mb-2">
+          <label class="form-label small" for="banner_arquivo">Enviar banner do computador (opcional)</label>
+          <input class="form-control form-control-sm" type="file" name="banner_arquivo" id="banner_arquivo" accept="image/png,image/jpeg,image/gif,image/webp">
+          <div class="form-text">Se enviar um arquivo, ele será usado no lugar da URL abaixo. O banner enviado precisa ser publicado em HTTPS para aparecer para destinatários externos.</div>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-md-8">
+            <label class="form-label small" for="banner_url">URL alternativa do banner (HTTPS)</label>
+            <input class="form-control form-control-sm" id="banner_url" name="banner_url" placeholder="https://site.com/banner.png">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small" for="banner_largura">Largura (px)</label>
+            <input class="form-control form-control-sm" type="number" min="1" max="1200" id="banner_largura" name="banner_largura" value="300">
+          </div>
+          <div class="col-md-8">
+            <label class="form-label small" for="banner_link">Link ao clicar (opcional)</label>
+            <input class="form-control form-control-sm" name="banner_link" id="banner_link" placeholder="https://site.com/campanha">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small" for="banner_alt">Texto alternativo</label>
+            <input class="form-control form-control-sm" name="banner_alt" id="banner_alt" placeholder="Banner institucional">
+          </div>
+        </div>
+        <div class="alert alert-info py-2 small">As opções de telefone, endereço e banner serão iguais para todas as assinaturas criadas ou atualizadas nesta operação. A largura padrão do banner é 300 px.</div>
+
+        <hr>
+        <h2 class="h6">Como tratar assinaturas existentes</h2>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" name="atualizar_existentes" id="atualizar_existentes">
+          <label class="form-check-label" for="atualizar_existentes"><strong>Atualizar também as assinaturas existentes</strong></label>
+          <div class="form-text">Desmarcado: cria somente assinaturas para colaboradores que ainda não têm uma. Marcado: regenera as existentes com o modelo e as opções escolhidas acima.</div>
+        </div>
+        <button class="btn btn-success" type="submit" {% if not modelos or not colaboradores %}disabled{% endif %}>Gerar assinaturas</button>
+      </div>
+    </form>
+  </div>
+  <div class="col-lg-5">
+    <div class="card h-100"><div class="card-body">
+      <h2 class="h6">Resumo antes da geração</h2>
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>Colaboradores ativos</span><strong>{{ colaboradores|length }}</strong></div>
+      <div class="d-flex justify-content-between py-2 border-bottom"><span>Já possuem assinatura ativa</span><strong>{{ existentes }}</strong></div>
+      <div class="d-flex justify-content-between py-2"><span>Sem assinatura</span><strong>{{ colaboradores|length - existentes }}</strong></div>
+      <p class="text-muted small mt-3 mb-0">A geração não envia e-mails nem altera o Outlook diretamente. Apenas cria ou atualiza as assinaturas no gerador.</p>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

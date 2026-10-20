@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}Empresa · Configurações{% endblock %}
+{% block conteudo %}
+<h1 class="h4 mb-3">Empresa e identidade visual</h1>
+<form method="post">
+  <div class="card mb-3">
+    <div class="card-body">
+      <h6 class="mb-3">Dados corporativos</h6>
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">Nome da empresa</label><input class="form-control" name="nome" value="{{ empresa.nome or '' }}"></div>
+        <div class="col-md-6"><label class="form-label">Nome fantasia</label><input class="form-control" name="nome_fantasia" value="{{ empresa.nome_fantasia or '' }}"></div>
+        <div class="col-md-4"><label class="form-label">CNPJ</label><input class="form-control" name="cnpj" value="{{ empresa.cnpj or '' }}"></div>
+        <div class="col-md-4"><label class="form-label">Site</label><input class="form-control" name="site" value="{{ empresa.site or '' }}"></div>
+        <div class="col-md-4"><label class="form-label">Telefone</label><input class="form-control" name="telefone" value="{{ empresa.telefone or '' }}"></div>
+        <div class="col-md-6"><label class="form-label">Endereço</label><input class="form-control" name="endereco" value="{{ empresa.endereco or '' }}"></div>
+        <div class="col-md-3"><label class="form-label">Cidade</label><input class="form-control" name="cidade" value="{{ empresa.cidade or '' }}"></div>
+        <div class="col-md-2"><label class="form-label">Estado</label><input class="form-control" name="estado" value="{{ empresa.estado or '' }}"></div>
+        <div class="col-md-1"><label class="form-label">CEP</label><input class="form-control" name="cep" value="{{ empresa.cep or '' }}"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h6 class="mb-3">Identidade visual</h6>
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label class="form-label">URL do logo principal</label>
+          <input class="form-control" id="logo_url" name="logo_url" value="{{ empresa.logo_url or '' }}" placeholder="https://www.empresa.com.br/assinaturas/logo.png">
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="testarImagem('logo_url','resultado_logo')">Testar imagem</button>
+          <div id="resultado_logo" class="small mt-1"></div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">URL do logo secundária</label>
+          <input class="form-control" name="logo_secundaria_url" value="{{ empresa.logo_secundaria_url or '' }}">
+        </div>
+        <div class="col-md-3"><label class="form-label">Cor principal</label><input type="color" class="form-control form-control-color" name="cor_principal" value="{{ empresa.cor_principal or '#003366' }}"></div>
+        <div class="col-md-3"><label class="form-label">Cor secundária</label><input type="color" class="form-control form-control-color" name="cor_secundaria" value="{{ empresa.cor_secundaria or '#666666' }}"></div>
+        <div class="col-md-3"><label class="form-label">Cor do texto</label><input type="color" class="form-control form-control-color" name="cor_texto" value="{{ empresa.cor_texto or '#333333' }}"></div>
+        <div class="col-md-3"><label class="form-label">Cor dos títulos</label><input type="color" class="form-control form-control-color" name="cor_titulos" value="{{ empresa.cor_titulos or '#003366' }}"></div>
+        <div class="col-md-6"><label class="form-label">Fonte</label><input class="form-control" name="fonte" value="{{ empresa.fonte or 'Arial, Helvetica, sans-serif' }}"></div>
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Salvar dados da empresa</button>
+</form>
+{% endblock %}

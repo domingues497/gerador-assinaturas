@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block titulo %}Preferências{% endblock %}
+{% block conteudo %}
+<h1 class="h4 mb-3">Preferências e backup</h1>
+
+<form method="post" class="card mb-4">
+  <div class="card-body">
+    <h6 class="mb-3">Configuração padrão do sistema</h6>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Modelo padrão</label>
+        <select class="form-select" name="modelo_padrao_id">
+          <option value="">Nenhum</option>
+          {% for m in modelos %}
+          <option value="{{ m.id }}" {% if config.modelo_padrao_id == m.id|string %}selected{% endif %}>{{ m.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6"><label class="form-label">Logo padrão (HTTPS)</label><input class="form-control" name="logo_padrao_url" value="{{ config.logo_padrao_url }}"></div>
+      <div class="col-md-4"><label class="form-label">Cor padrão</label><input type="color" class="form-control form-control-color" name="cor_padrao" value="{{ config.cor_padrao }}"></div>
+      <div class="col-md-4"><label class="form-label">Fonte padrão</label><input class="form-control" name="fonte_padrao" value="{{ config.fonte_padrao }}"></div>
+      <div class="col-md-4"><label class="form-label">Tamanho padrão</label><input class="form-control" name="tamanho_padrao" value="{{ config.tamanho_padrao }}"></div>
+      <div class="col-md-8">
+        <label class="form-label">Ícone do WhatsApp (URL HTTPS)</label>
+        <input class="form-control" id="whatsapp_icone_url" name="whatsapp_icone_url" value="{{ config.whatsapp_icone_url }}">
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="testarImagem('whatsapp_icone_url','resultado_whatsapp_icone')">Testar imagem</button>
+        <div id="resultado_whatsapp_icone" class="small mt-1"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer"><button class="btn btn-primary">Salvar preferências</button></div>
+</form>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h6 class="mb-3">Backup</h6>
+    <p class="text-muted small">O backup contém o banco de dados completo (empresa, colaboradores, modelos, redes sociais e assinaturas). Como as imagens são hospedadas externamente, elas não são incluídas.</p>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{{ url_for('configuracoes.backup_exportar') }}" class="btn btn-outline-secondary">Exportar backup</a>
+    </div>
+    <hr>
+    <form method="post" action="{{ url_for('configuracoes.backup_importar') }}" enctype="multipart/form-data" class="d-flex gap-2 align-items-center"
+          onsubmit="return confirm('Importar este backup substituirá as configurações atuais. Deseja continuar?');">
+      <input type="file" name="arquivo_backup" accept=".zip" class="form-control" style="max-width: 320px;" required>
+      <button class="btn btn-outline-danger">Importar backup</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

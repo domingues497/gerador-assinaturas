@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Assinaturas salvas{% endblock %}
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Assinaturas salvas</h1>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{{ url_for('assinaturas.gerar_todas') }}" class="btn btn-success">Gerar todas as assinaturas</a>
+    <a href="{{ url_for('assinaturas.nova') }}" class="btn btn-primary">+ Nova assinatura</a>
+  </div>
+</div>
+<div class="card">
+  <table class="table table-hover mb-0 align-middle">
+    <thead class="table-light"><tr><th>Nome</th><th>Colaborador</th><th>Modelo</th><th class="text-end">Ações</th></tr></thead>
+    <tbody>
+      {% for a in assinaturas %}
+      <tr>
+        <td>{{ a.nome }}</td>
+        <td>{{ a.colaborador_nome }}</td>
+        <td>{{ a.modelo_nome }}</td>
+        <td class="text-end">
+          <a href="{{ url_for('assinaturas.visualizar', assinatura_id=a.id) }}" class="btn btn-sm btn-outline-secondary">Visualizar</a>
+          <a href="{{ url_for('assinaturas.editar', assinatura_id=a.id) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+          <a href="{{ url_for('assinaturas.exportar_html', assinatura_id=a.id) }}" class="btn btn-sm btn-outline-secondary">Exportar</a>
+          <form method="post" action="{{ url_for('assinaturas.duplicar', assinatura_id=a.id) }}" class="d-inline">
+            <button class="btn btn-sm btn-outline-secondary">Duplicar</button>
+          </form>
+          <form method="post" action="{{ url_for('assinaturas.excluir', assinatura_id=a.id) }}" class="d-inline" onsubmit="return confirm('Excluir esta assinatura?');">
+            <button class="btn btn-sm btn-outline-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="text-center text-muted py-4">Nenhuma assinatura salva ainda.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

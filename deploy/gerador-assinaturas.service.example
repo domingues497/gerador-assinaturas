@@ -1,0 +1,16 @@
+[Unit]
+Description=Gerador de Assinaturas de E-mail (Flask/Gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=gerador
+Group=gerador
+WorkingDirectory=/opt/gerador-assinaturas
+EnvironmentFile=/etc/gerador-assinaturas.env
+ExecStart=/opt/gerador-assinaturas/.venv/bin/gunicorn --workers 1 --bind 127.0.0.1:8017 --access-logfile - --error-logfile - wsgi:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

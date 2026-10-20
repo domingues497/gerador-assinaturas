@@ -1,0 +1,78 @@
+/* Suplemento do Gerador de Assinaturas - ativação automática de composição.
+ * A URL é preenchida por tools/configurar_suplemento.py.
+ */
+const GERADOR_API_BASE_URL = "{{BASE_URL}}";
+
+async function inserirAssinaturaCorporativa(event) {
+  let finalizado = false;
+  const concluir = () => {
+    if (!finalizado) {
+      finalizado = true;
+      try { event.completed(); } catch (_) { /* runtime já encerrado */ }
+    }
+  };
+
+  try {
+    if (!Office.context || !Office.context.mailbox || !Office.context.mailbox.item) {
+      concluir();
+      return;
+    }
+    if (!Office.context.requirements.isSetSupported("Mailbox", "1.10")) {
+      console.error("O Outlook atual não oferece suporte ao Mailbox 1.10.");
+      concluir();
+      return;
+    }
+    if (!OfficeRuntime || !OfficeRuntime.auth || !OfficeRuntime.auth.getAccessToken) {
+      console.error("SSO do Office Runtime indisponível neste cliente.");
+      concluir();
+      return;
+    }
+
+    const token = await OfficeRuntime.auth.getAccessToken({
+      allowSignInPrompt: true,
+      allowConsentPrompt: false,
+      forMSGraphAccess: false
+    });
+
+    const resposta = await fetch(`${GERADOR_API_BASE_URL}/api/outlook/signature`, {
+      method: "GET",
+      headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" },
+      cache: "no-store",
+      credentials: "omit"
+    });
+    if (!resposta.ok) {
+      const detalhe = await resposta.text().catch(() => "");
+      console.error(`Gerador de Assinaturas respondeu HTTP ${resposta.status}.`, detalhe);
+      concluir();
+      return;
+    }
+
+    const payload = await resposta.json();
+    if (!payload || typeof payload.html !== "string" || !payload.html.trim()) {
+      console.error("A API não retornou HTML de assinatura válido.");
+      concluir();
+      return;
+    }
+    if (payload.html.length > 30000) {
+      console.error("A assinatura excede o limite de 30.000 caracteres do Outlook.");
+      concluir();
+      return;
+    }
+
+    Office.context.mailbox.item.body.setSignatureAsync(
+      payload.html,
+      { coercionType: Office.CoercionType.Html },
+      (resultado) => {
+        if (resultado.status !== Office.AsyncResultStatus.Succeeded) {
+          console.error("Não foi possível inserir a assinatura corporativa:", resultado.error);
+        }
+        concluir();
+      }
+    );
+  } catch (erro) {
+    console.error("Falha ao consultar/aplicar a assinatura corporativa:", erro);
+    concluir();
+  }
+}
+
+Office.actions.associate("onNewMessageComposeHandler", inserirAssinaturaCorporativa);

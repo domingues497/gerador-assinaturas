@@ -1,0 +1,77 @@
+:root {
+  --cor-primaria: #1c3a5e;
+  --cor-primaria-escura: #12283f;
+  --cor-acento: #2f7d6b;
+  --cor-fundo: #f6f7f9;
+  --cor-texto: #22303f;
+}
+
+body {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.bg-primary-custom {
+  background-color: var(--cor-primaria) !important;
+}
+
+.navbar-brand {
+  letter-spacing: 0.01em;
+}
+
+.card {
+  border: 1px solid #e2e6ea;
+  border-radius: 10px;
+}
+
+.card-dashboard {
+  transition: box-shadow 0.15s ease;
+}
+.card-dashboard:hover {
+  box-shadow: 0 4px 14px rgba(28, 58, 94, 0.12);
+}
+
+.btn-primary {
+  background-color: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+}
+.btn-primary:hover {
+  background-color: var(--cor-primaria-escura);
+  border-color: var(--cor-primaria-escura);
+}
+
+.btn-acento {
+  background-color: var(--cor-acento);
+  border-color: var(--cor-acento);
+  color: #fff;
+}
+.btn-acento:hover {
+  color: #fff;
+  opacity: 0.9;
+}
+
+.preview-box {
+  background: #fff;
+  border: 1px dashed #c6cdd4;
+  border-radius: 8px;
+  padding: 24px;
+  min-height: 160px;
+}
+
+.rede-icone {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.wizard-step {
+  font-size: 0.85rem;
+  color: #6c7a89;
+}
+
+code.template-hint {
+  background: #eef1f4;
+  padding: 2px 6px;
+  border-radius: 4px;
+}

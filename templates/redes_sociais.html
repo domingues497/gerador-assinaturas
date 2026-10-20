@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block titulo %}Redes sociais{% endblock %}
+{% block conteudo %}
+<h1 class="h4 mb-3">Redes sociais</h1>
+
+<div class="card mb-4">
+  <div class="card-header">Adicionar rede social</div>
+  <div class="card-body">
+    <form method="post" action="{{ url_for('redes_sociais.nova') }}" class="row g-3">
+      <div class="col-md-3"><label class="form-label">Nome</label><input class="form-control" name="nome" required placeholder="LinkedIn"></div>
+      <div class="col-md-4"><label class="form-label">URL</label><input class="form-control" name="url" placeholder="https://linkedin.com/company/empresa"></div>
+      <div class="col-md-3"><label class="form-label">URL do ícone (HTTPS)</label><input class="form-control" name="icone_url" placeholder="https://.../linkedin.png"></div>
+      <div class="col-md-1"><label class="form-label">Ordem</label><input type="number" class="form-control" name="ordem" value="0"></div>
+      <div class="col-md-1 d-flex align-items-end"><div class="form-check"><input class="form-check-input" type="checkbox" name="ativo" checked><label class="form-check-label">Ativo</label></div></div>
+      <div class="col-12"><button class="btn btn-primary btn-sm">Adicionar</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <table class="table align-middle mb-0">
+    <thead class="table-light"><tr><th>Ícone</th><th>Nome</th><th>URL</th><th>Ordem</th><th>Ativo</th><th class="text-end">Ações</th></tr></thead>
+    <tbody>
+      {% for r in redes %}
+      <tr>
+        <td>{% if r.icone_url %}<img src="{{ r.icone_url }}" class="rede-icone" alt="{{ r.nome }}">{% endif %}</td>
+        <td>{{ r.nome }}</td>
+        <td class="text-truncate" style="max-width:280px;">{{ r.url }}</td>
+        <td>{{ r.ordem }}</td>
+        <td>{% if r.ativo %}<span class="badge text-bg-success">Sim</span>{% else %}<span class="badge text-bg-secondary">Não</span>{% endif %}</td>
+        <td class="text-end">
+          <form method="post" action="{{ url_for('redes_sociais.excluir', rede_id=r.id) }}" class="d-inline" onsubmit="return confirm('Remover esta rede social?');">
+            <button class="btn btn-sm btn-outline-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center text-muted py-4">Nenhuma rede social configurada.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

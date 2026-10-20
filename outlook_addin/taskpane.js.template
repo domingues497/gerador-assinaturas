@@ -1,0 +1,33 @@
+const GERADOR_API_BASE_URL = "{{BASE_URL}}";
+Office.onReady(() => {
+  const button = document.getElementById("atualizar");
+  const status = document.getElementById("status");
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    status.textContent = "Consultando assinatura publicada…";
+    try {
+      const token = await OfficeRuntime.auth.getAccessToken({
+        allowSignInPrompt: true, allowConsentPrompt: false, forMSGraphAccess: false
+      });
+      const response = await fetch(`${GERADOR_API_BASE_URL}/api/outlook/signature`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        cache: "no-store", credentials: "omit"
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || `Erro HTTP ${response.status}`);
+      await new Promise((resolve, reject) => {
+        Office.context.mailbox.item.body.setSignatureAsync(
+          data.html, { coercionType: Office.CoercionType.Html }, result => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) resolve();
+            else reject(new Error(result.error && result.error.message || "Falha ao inserir assinatura."));
+          }
+        );
+      });
+      status.textContent = "Assinatura atualizada com sucesso.";
+    } catch (error) {
+      status.textContent = `Não foi possível atualizar: ${error.message || error}`;
+    } finally {
+      button.disabled = false;
+    }
+  });
+});

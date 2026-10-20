@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block titulo %}Configuração inicial{% endblock %}
+{% block conteudo %}
+<div class="mx-auto" style="max-width: 720px;">
+  <p class="wizard-step">CONFIGURAÇÃO INICIAL</p>
+  <h1 class="h4 mb-3">Nenhuma configuração encontrada</h1>
+  <p class="text-muted">Antes de criar a primeira assinatura, informe os dados básicos da empresa. Você poderá alterá-los depois em Configurações.</p>
+
+  <form method="post" class="card">
+    <div class="card-body">
+      <h6 class="mb-3">1. Dados da empresa</h6>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Nome da empresa</label>
+          <input type="text" class="form-control" name="nome" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Nome fantasia</label>
+          <input type="text" class="form-control" name="nome_fantasia">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Site</label>
+          <input type="url" class="form-control" name="site" placeholder="https://www.empresa.com.br">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Telefone</label>
+          <input type="text" class="form-control" name="telefone">
+        </div>
+      </div>
+
+      <h6 class="mb-3">2 e 3. Identidade visual e logo</h6>
+      <div class="row g-3 mb-3">
+        <div class="col-md-8">
+          <label class="form-label">URL do logo (HTTPS)</label>
+          <input type="url" class="form-control" name="logo_url" placeholder="https://www.empresa.com.br/assinaturas/logo.png">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Cor principal</label>
+          <input type="color" class="form-control form-control-color" name="cor_principal" value="#003366">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Fonte</label>
+          <input type="text" class="form-control" name="fonte" value="Arial, Helvetica, sans-serif">
+        </div>
+      </div>
+
+      <h6 class="mb-3">4. Endereço</h6>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6"><label class="form-label">Endereço</label><input type="text" class="form-control" name="endereco"></div>
+        <div class="col-md-3"><label class="form-label">Cidade</label><input type="text" class="form-control" name="cidade"></div>
+        <div class="col-md-3"><label class="form-label">Estado</label><input type="text" class="form-control" name="estado"></div>
+      </div>
+
+      <p class="text-muted small">As redes sociais podem ser configuradas depois, em Configurações → Redes sociais.</p>
+      <button type="submit" class="btn btn-primary">Finalizar configuração</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

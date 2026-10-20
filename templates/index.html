@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block titulo %}Início · Gerador de Assinaturas{% endblock %}
+{% block conteudo %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1">Olá! {{ empresa.nome or "" }}</h1>
+    <p class="text-muted mb-0">Configure a identidade da empresa uma única vez e gere assinaturas para quantos colaboradores precisar.</p>
+  </div>
+  <a href="{{ url_for('assinaturas.nova') }}" class="btn btn-primary">+ Nova assinatura</a>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card card-dashboard h-100">
+      <div class="card-body">
+        <h6 class="text-muted">Colaboradores ativos</h6>
+        <p class="display-6 mb-2">{{ total_colaboradores }}</p>
+        <a href="{{ url_for('colaboradores.listar') }}">Gerenciar colaboradores →</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card card-dashboard h-100">
+      <div class="card-body">
+        <h6 class="text-muted">Modelos disponíveis</h6>
+        <p class="display-6 mb-2">{{ total_modelos }}</p>
+        <a href="{{ url_for('modelos.listar') }}">Gerenciar modelos →</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card card-dashboard h-100">
+      <div class="card-body">
+        <h6 class="text-muted">Assinaturas salvas</h6>
+        <p class="display-6 mb-2">{{ total_assinaturas }}</p>
+        <a href="{{ url_for('assinaturas.listar') }}">Ver assinaturas →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-body">
+    <h6 class="mb-2">Fluxo recomendado</h6>
+    <p class="mb-0 text-muted">
+      Configuração da empresa → Cadastro de colaboradores → Escolha do modelo →
+      Geração da assinatura → Pré-visualização → Copiar/Exportar → Colar no Novo Outlook.
+    </p>
+  </div>
+</div>
+{% endblock %}
