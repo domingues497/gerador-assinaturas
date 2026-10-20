@@ -10,13 +10,31 @@
 </div>
 <div class="card">
   <table class="table table-hover mb-0 align-middle">
-    <thead class="table-light"><tr><th>Nome</th><th>Colaborador</th><th>Modelo</th><th class="text-end">Ações</th></tr></thead>
+    <thead class="table-light"><tr><th>Nome</th><th>Colaborador</th><th>Modelo</th><th>Status de atualização</th><th class="text-end">Ações</th></tr></thead>
     <tbody>
       {% for a in assinaturas %}
       <tr>
         <td>{{ a.nome }}</td>
         <td>{{ a.colaborador_nome }}</td>
         <td>{{ a.modelo_nome }}</td>
+        <td>
+          {% if a.atualizada %}
+          <span class="badge text-bg-success">Atualizada</span>
+          {% if a.atualizada_em %}
+          <div class="small text-muted mt-1">Em {{ a.atualizada_em }}</div>
+          {% endif %}
+          <form method="post" action="{{ url_for('assinaturas.alterar_status', assinatura_id=a.id) }}" class="mt-1">
+            <input type="hidden" name="atualizada" value="0">
+            <button type="submit" class="btn btn-sm btn-outline-warning">Marcar pendente</button>
+          </form>
+          {% else %}
+          <span class="badge text-bg-warning">Pendente</span>
+          <form method="post" action="{{ url_for('assinaturas.alterar_status', assinatura_id=a.id) }}" class="mt-1">
+            <input type="hidden" name="atualizada" value="1">
+            <button type="submit" class="btn btn-sm btn-outline-success">Marcar atualizada</button>
+          </form>
+          {% endif %}
+        </td>
         <td class="text-end">
           <a href="{{ url_for('assinaturas.visualizar', assinatura_id=a.id) }}" class="btn btn-sm btn-outline-secondary">Visualizar</a>
           <a href="{{ url_for('assinaturas.editar', assinatura_id=a.id) }}" class="btn btn-sm btn-outline-primary">Editar</a>
@@ -30,7 +48,7 @@
         </td>
       </tr>
       {% else %}
-      <tr><td colspan="4" class="text-center text-muted py-4">Nenhuma assinatura salva ainda.</td></tr>
+      <tr><td colspan="5" class="text-center text-muted py-4">Nenhuma assinatura salva ainda.</td></tr>
       {% endfor %}
     </tbody>
   </table>

@@ -17,7 +17,7 @@ import logging
 from contextlib import contextmanager
 
 APP_NAME = "GeradorAssinaturas"
-DB_VERSION = 1
+DB_VERSION = 2
 DB_FILENAME = "assinaturas.db"
 
 logger = logging.getLogger(APP_NAME)
@@ -140,7 +140,9 @@ CREATE TABLE IF NOT EXISTS assinaturas (
     html_gerado TEXT,
     ativo INTEGER DEFAULT 1,
     criado_em TEXT DEFAULT (datetime('now')),
-    atualizado_em TEXT DEFAULT (datetime('now'))
+    atualizado_em TEXT DEFAULT (datetime('now')),
+    atualizada INTEGER NOT NULL DEFAULT 0,
+    atualizada_em TEXT
 );
 
 CREATE TABLE IF NOT EXISTS configuracoes (
@@ -179,8 +181,15 @@ def init_db():
 
 
 def _run_migrations(conn, from_version: int, to_version: int):
-    """
-    Ponto de extensão para migrações futuras.
-    Ex.: if from_version < 2: conn.executescript("ALTER TABLE ...")
-    """
-    pass
+    """Aplica migrações incrementais sem perder as assinaturas existentes."""
+    if from_version < 2 <= to_version:
+        colunas = {
+            row["name"]
+            for row in conn.execute("PRAGMA table_info(assinaturas)").fetchall()
+        }
+        if "atualizada" not in colunas:
+            conn.execute(
+                "ALTER TABLE assinaturas ADD COLUMN atualizada INTEGER NOT NULL DEFAULT 0"
+            )
+        if "atualizada_em" not in colunas:
+            conn.execute("ALTER TABLE assinaturas ADD COLUMN atualizada_em TEXT")

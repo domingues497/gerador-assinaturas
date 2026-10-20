@@ -65,10 +65,28 @@ def atualizar_assinatura(assinatura_id: int, nome: str, colaborador_id: int, mod
     with get_connection() as conn:
         conn.execute(
             "UPDATE assinaturas SET nome = ?, colaborador_id = ?, modelo_id = ?, "
-            "overrides_json = ?, html_gerado = ?, atualizado_em = datetime('now') WHERE id = ?",
+            "overrides_json = ?, html_gerado = ?, atualizado_em = datetime('now'), "
+            "atualizada = 0, atualizada_em = NULL WHERE id = ?",
             (nome, colaborador_id, modelo_id, json.dumps(overrides or {}), html_gerado, assinatura_id),
         )
 
+
+
+def definir_status_atualizada(assinatura_id: int, atualizada: bool) -> bool:
+    """Atualiza o status individual de uma assinatura salva."""
+    with get_connection() as conn:
+        cursor = conn.execute(
+            """
+            UPDATE assinaturas
+            SET atualizada = ?, atualizada_em = CASE
+                WHEN ? = 1 THEN datetime('now')
+                ELSE NULL
+            END
+            WHERE id = ? AND ativo = 1
+            """,
+            (1 if atualizada else 0, 1 if atualizada else 0, assinatura_id),
+        )
+        return cursor.rowcount > 0
 
 def duplicar_assinatura(assinatura_id: int) -> int | None:
     original = obter_assinatura(assinatura_id)

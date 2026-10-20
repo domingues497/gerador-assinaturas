@@ -209,6 +209,21 @@ def exportar_html(assinatura_id):
     )
 
 
+@bp.route("/<int:assinatura_id>/status", methods=["POST"])
+def alterar_status(assinatura_id):
+    """Marca apenas esta assinatura como atualizada ou pendente."""
+    atualizada = request.form.get("atualizada") == "1"
+    if assinatura_model.definir_status_atualizada(assinatura_id, atualizada):
+        flash(
+            "Assinatura marcada como atualizada." if atualizada
+            else "Assinatura marcada como pendente de atualização.",
+            "success",
+        )
+    else:
+        flash("Assinatura não encontrada.", "danger")
+    return redirect(url_for("assinaturas.listar"))
+
+
 @bp.route("/<int:assinatura_id>/duplicar", methods=["POST"])
 def duplicar(assinatura_id):
     novo_id = assinatura_model.duplicar_assinatura(assinatura_id)
