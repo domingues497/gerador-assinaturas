@@ -17,7 +17,7 @@ import logging
 from contextlib import contextmanager
 
 APP_NAME = "GeradorAssinaturas"
-DB_VERSION = 2
+DB_VERSION = 3
 DB_FILENAME = "assinaturas.db"
 
 logger = logging.getLogger(APP_NAME)
@@ -182,7 +182,9 @@ def init_db():
 
 def _run_migrations(conn, from_version: int, to_version: int):
     """Aplica migrações incrementais sem perder as assinaturas existentes."""
-    if from_version < 2 <= to_version:
+    if from_version < 3 <= to_version:
+        # Verifica as colunas independentemente do estado anterior do banco.
+        # Isso também corrige bases já marcadas como versão 2, mas sem as colunas.
         colunas = {
             row["name"]
             for row in conn.execute("PRAGMA table_info(assinaturas)").fetchall()

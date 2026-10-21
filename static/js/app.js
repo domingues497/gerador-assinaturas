@@ -83,32 +83,44 @@ function mostrarStatusCopia(elementoId, mensagem, sucesso = true) {
 async function copiarAssinaturaFormatada() {
   const previewBox = document.getElementById("preview-assinatura");
   if (!previewBox) return;
+
+  // Copia somente o HTML interno da assinatura. A borda, o fundo e o
+  // espaçamento do contêiner de pré-visualização não fazem parte dela.
   const html = previewBox.innerHTML;
+  const texto = previewBox.innerText;
+
   try {
     if (navigator.clipboard && window.ClipboardItem) {
       await navigator.clipboard.write([
         new ClipboardItem({
           "text/html": new Blob([html], { type: "text/html" }),
-          "text/plain": new Blob([previewBox.innerText], { type: "text/plain" }),
+          "text/plain": new Blob([texto], { type: "text/plain" }),
         }),
       ]);
-      mostrarStatusCopia("status-copia", "Assinatura copiada! Cole diretamente no Novo Outlook.");
+      mostrarStatusCopia("status-copia", "Assinatura copiada sem a borda da pré-visualização.");
     } else {
       throw new Error("Clipboard API indisponível");
     }
   } catch (err) {
-    // Fallback: seleciona o conteúdo para cópia manual (Ctrl+C)
+    // Fallback: seleciona apenas o conteúdo interno, não o contêiner com borda.
     const range = document.createRange();
-    range.selectNode(previewBox);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
+    range.selectNodeContents(previewBox);
+    const selecao = window.getSelection();
+    selecao.removeAllRanges();
+    selecao.addRange(range);
     try {
-      document.execCommand("copy");
-      mostrarStatusCopia("status-copia", "Assinatura copiada (modo compatibilidade).");
+      const copiou = document.execCommand("copy");
+      mostrarStatusCopia(
+        "status-copia",
+        copiou
+          ? "Assinatura copiada sem a borda da pré-visualização."
+          : "Não foi possível copiar automaticamente. Selecione apenas a assinatura e use Ctrl+C.",
+        Boolean(copiou)
+      );
     } catch (e) {
-      mostrarStatusCopia("status-copia", "Não foi possível copiar automaticamente. Selecione o texto acima e use Ctrl+C.", false);
+      mostrarStatusCopia("status-copia", "Não foi possível copiar automaticamente. Selecione apenas a assinatura e use Ctrl+C.", false);
     }
-    window.getSelection().removeAllRanges();
+    selecao.removeAllRanges();
   }
 }
 

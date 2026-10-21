@@ -10,7 +10,15 @@
 </div>
 <div class="card">
   <table class="table table-hover mb-0 align-middle">
-    <thead class="table-light"><tr><th>Nome</th><th>Colaborador</th><th>Modelo</th><th>Status de atualização</th><th class="text-end">Ações</th></tr></thead>
+    <thead class="table-light">
+      <tr>
+        <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 text-decoration-none text-dark fw-semibold assinatura-sort" data-sort-column="0">Nome <span class="sort-indicator" aria-hidden="true">↕</span></button></th>
+        <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 text-decoration-none text-dark fw-semibold assinatura-sort" data-sort-column="1">Colaborador <span class="sort-indicator" aria-hidden="true">↕</span></button></th>
+        <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 text-decoration-none text-dark fw-semibold assinatura-sort" data-sort-column="2">Modelo <span class="sort-indicator" aria-hidden="true">↕</span></button></th>
+        <th scope="col" aria-sort="none"><button type="button" class="btn btn-link p-0 text-decoration-none text-dark fw-semibold assinatura-sort" data-sort-column="3">Status de atualização <span class="sort-indicator" aria-hidden="true">↕</span></button></th>
+        <th class="text-end" scope="col">Ações</th>
+      </tr>
+    </thead>
     <tbody>
       {% for a in assinaturas %}
       <tr>
@@ -53,4 +61,56 @@
     </tbody>
   </table>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const tabela = document.querySelector('.card table');
+  if (!tabela) return;
+
+  const corpo = tabela.querySelector('tbody');
+  const botoes = tabela.querySelectorAll('.assinatura-sort');
+  let colunaAtual = -1;
+  let direcao = 'asc';
+
+  function textoCelula(linha, indice) {
+    const celula = linha.cells[indice];
+    if (!celula) return '';
+    // Para a coluna de status, usa apenas o texto do selo e ignora os botões.
+    const selo = celula.querySelector('.badge');
+    return (selo || celula).textContent.trim().replace(/\s+/g, ' ');
+  }
+
+  botoes.forEach(function (botao) {
+    botao.addEventListener('click', function () {
+      const coluna = Number(botao.dataset.sortColumn);
+      if (colunaAtual === coluna) {
+        direcao = direcao === 'asc' ? 'desc' : 'asc';
+      } else {
+        colunaAtual = coluna;
+        direcao = 'asc';
+      }
+
+      const linhas = Array.from(corpo.querySelectorAll('tr')).filter(function (linha) {
+        return linha.cells.length > coluna && !linha.querySelector('td[colspan]');
+      });
+
+      linhas.sort(function (a, b) {
+        const valorA = textoCelula(a, coluna);
+        const valorB = textoCelula(b, coluna);
+        return valorA.localeCompare(valorB, 'pt-BR', { sensitivity: 'base', numeric: true }) * (direcao === 'asc' ? 1 : -1);
+      });
+
+      linhas.forEach(function (linha) { corpo.appendChild(linha); });
+
+      botoes.forEach(function (outroBotao) {
+        const th = outroBotao.closest('th');
+        const ativo = outroBotao === botao;
+        th.setAttribute('aria-sort', ativo ? (direcao === 'asc' ? 'ascending' : 'descending') : 'none');
+        const indicador = outroBotao.querySelector('.sort-indicator');
+        if (indicador) indicador.textContent = ativo ? (direcao === 'asc' ? '↑' : '↓') : '↕';
+      });
+    });
+  });
+});
+</script>
 {% endblock %}
